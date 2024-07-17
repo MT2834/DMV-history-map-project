@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:school_project/learn_screen.dart';
-
+import 'package:firebase_core/firebase_core.dart';
+import 'package:school_project/firebase_options.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'contribute.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFireBaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -133,8 +139,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 Container(
                   margin: const EdgeInsets.all(10),
-                  child: const TextField(
-                    decoration: InputDecoration(
+                  child: TextField(
+                    decoration: const InputDecoration(
                       hintText: 'Enter text here',
                       contentPadding: EdgeInsets.symmetric(
                           vertical: 10.0, horizontal: 20.0),
@@ -150,6 +156,11 @@ class _MyHomePageState extends State<MyHomePage> {
                         borderRadius: BorderRadius.all(Radius.circular(25.0)),
                       ),
                     ),
+                    onSubmitted: (String names) {
+                      final db = FirebaseFirestore.instance;
+                      final name = <String, dynamic>{'name': names};
+                      db.collection('names').add(name);
+                    },
                   ),
                 ),
               ],
